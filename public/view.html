@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Employee Details</title>
+    <style>
+        /* Add CSS styles to adjust the appearance of the image container */
+        .passport-photo {
+            width: 150px; /* Adjust as needed */
+            height: 200px; /* Adjust as needed */
+            overflow: hidden; /* Hide any overflow */
+        }
+        .passport-photo img {
+            width: 100%; /* Make the image fill the container */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <h1>View Employee Details</h1>
+    <form action="/view" method="get">
+        <label for="employeeId">Enter Employee ID:</label><br>
+        <input type="text" id="employeeId" name="employeeId" required><br><br>
+        <button type="submit">Search</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('employeeId')) {
+            fetch(`/api/employee/${urlParams.get('employeeId')}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultDiv = document.getElementById('result');
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p>${data.error}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `
+                            <div class="passport-photo">
+                                <img src="data:image/png;base64,${data.profilePhoto}" alt="Profile Photo" />
+                            </div>
+                            <p>Name: ${data.name}</p>
+                            <p>Email: ${data.email}</p>
+                            <p>Employee ID: ${data.employeeId}</p>
+                            <p>Phone Number: ${data.phoneNumber}</p>
+                        `;
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
